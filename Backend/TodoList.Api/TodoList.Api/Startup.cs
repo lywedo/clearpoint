@@ -5,6 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using TodoList.Api.Application.Abstractions;
+using TodoList.Api.Application.Services;
+using TodoList.Api.Infrastructure.Context;
+using TodoList.Api.Infrastructure.Repositories;
+using TodoList.Api.Middleware;
 
 namespace TodoList.Api
 {
@@ -38,6 +43,8 @@ namespace TodoList.Api
             });
 
             services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoItemsDB"));
+            services.AddScoped<ITodoItemsRepository, TodoItemsRepository>();
+            services.AddScoped<ITodoItemsService, TodoItemsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +64,7 @@ namespace TodoList.Api
             app.UseCors("AllowAllHeaders");
 
             app.UseAuthorization();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
