@@ -57,7 +57,8 @@ namespace TodoList.Api.Controllers
         {
             try
             {
-                await _todoItemsService.SetTodoItem(id, todoItem, cancellationToken);
+                var result = await _todoItemsService.SetTodoItem(id, todoItem, cancellationToken);
+                if (result > 0) return Ok(id);
             }
             catch (DbUpdateConcurrencyException)
             {

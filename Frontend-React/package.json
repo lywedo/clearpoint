@@ -7,14 +7,19 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
     "axios": "^1.2.2",
     "bootstrap": "^5.2.3",
     "cross-env": "^7.0.3",
-    "node-sass": "^8.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.0",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1",
+    "sass": "^1.77.2",
+    "typescript": "^5.4.5",
     "web-vitals": "^3.1.1"
   },
   "scripts": {
@@ -42,7 +47,8 @@
     ]
   },
   "devDependencies": {
-    "prettier": "^2.8.3"
+    "prettier": "^2.8.3",
+    "ts-loader": "^9.5.1"
   },
   "jest": {
     "transformIgnorePatterns": [
