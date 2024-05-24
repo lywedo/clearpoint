@@ -42,7 +42,7 @@ export const AddTodoItem = () => {
           </Alert>
         </div>
       )}
-      <h1>Add Item</h1>
+      {/* <h1>Add Item</h1> */}
       <Form.Group as={Row} className="mb-3" controlId="formAddTodoItem">
         <Form.Label column sm="2">
           Description

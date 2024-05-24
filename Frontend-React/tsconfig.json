@@ -26,7 +26,8 @@
   },
   "include": [
     "src",
-    "auto-imports.d.ts"
+    "auto-imports.d.ts",
+    "./setupTests.ts"
   ],
   //"references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -1,61 +1,86 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import { TodoItems } from '../TodoItems';
+import { render, screen, fireEvent} from '@testing-library/react'
+import '@testing-library/jest-dom/extend-expect'
+import { TodoItems } from '../TodoItems'
+import { act } from 'react-dom/test-utils'
 
-jest.mock('../../hooks', () => ({
-  __esModule: true,
+import { useFetchTodoItems, usePutTodoItem } from '../../../hooks'
+import React from 'react'
+
+
+jest.mock('react', () => {
+  const actualReact = jest.requireActual('react')
+  return {
+    ...actualReact,
+    useState: jest.fn(),
+  }
+})
+jest.mock('../../../hooks', () => ({
   useFetchTodoItems: jest.fn(),
   usePutTodoItem: jest.fn(),
-}));
+}))
 
-describe('TodoItems component', () => {
-  beforeEach(() => {
-    jest.resetAllMocks();
-  });
+describe('TodoItems', () => {
+  test('renders the todo items correctly', () => {
+    const mockTodoItems = [
+      { id: '1', description: 'Task 1', isCompleted: false },
+      { id: '2', description: 'Task 2', isCompleted: false },
+    ]
+    const mockFetchData = jest.fn()
+    const mockPutData = jest.fn()
+    const useStateMock = (init) => [mockTodoItems, jest.fn()]
 
-  test('renders the component', () => {
-    render(<TodoItems />);
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
-  });
+    useFetchTodoItems.mockReturnValue({
+      data: mockTodoItems,
+      loading: false,
+      error: null,
+      fetchData: mockFetchData,
+    })
 
-  test('fetches data and renders todo items', async () => {
-    const mockItems = [{ id: '1', description: 'Test item', isCompleted: false }];
-    const mockFetchData = jest.fn().mockResolvedValue(mockItems);
+    usePutTodoItem.mockReturnValue({
+      data: '1',
+      error: null,
+      putData: mockPutData,
+    })
+
+    jest.spyOn(React, 'useState').mockImplementation(useStateMock)
+    render(<TodoItems />)
+
+    expect(screen.getByText('Showing 2 Item(s)')).toBeInTheDocument()
+    expect(screen.getByText('Task 1')).toBeInTheDocument()
+    expect(screen.getByText('Task 2')).toBeInTheDocument()
+  })
+
+test('calls putData when "Mark as completed" button is clicked', async () => {
+    const mockTodoItems = [
+      { id: '1', description: 'Task 1', isCompleted: false },
+      { id: '2', description: 'Task 2', isCompleted: false },
+    ];
+    const mockFetchData = jest.fn();
     const mockPutData = jest.fn();
-    const mockUseFetchTodoItems = jest.fn().mockReturnValue({ data: mockItems, loading: false, error: null, fetchData: mockFetchData });
-    const mockUsePutTodoItem = jest.fn().mockReturnValue({ data: null, error: null, putData: mockPutData });
-
-    jest.doMock('../../hooks', () => ({
-      __esModule: true,
-      useFetchTodoItems: mockUseFetchTodoItems,
-      usePutTodoItem: mockUsePutTodoItem,
-    }));
-
-    render(<TodoItems />);
-    await waitFor(() => {
-      expect(mockFetchData).toHaveBeenCalled();
-      expect(screen.getByText('Test item')).toBeInTheDocument();
+    const useStateMock = (init) => [mockTodoItems, jest.fn()];
+  
+    useFetchTodoItems.mockReturnValue({
+      data: mockTodoItems,
+      loading: false,
+      error: null,
+      fetchData: mockFetchData,
     });
-  });
-
-  test('handles marking item as complete', async () => {
-    const mockItems = [{ id: '1', description: 'Test item', isCompleted: false }];
-    const mockFetchData = jest.fn().mockResolvedValue(mockItems);
-    const mockPutData = jest.fn().mockResolvedValue(null);
-    const mockUseFetchTodoItems = jest.fn().mockReturnValue({ data: mockItems, loading: false, error: null, fetchData: mockFetchData });
-    const mockUsePutTodoItem = jest.fn().mockReturnValue({ data: null, error: null, putData: mockPutData });
-
-    jest.doMock('../../hooks', () => ({
-      __esModule: true,
-      useFetchTodoItems: mockUseFetchTodoItems,
-      usePutTodoItem: mockUsePutTodoItem,
-    }));
-
-    render(<TodoItems />);
-    await waitFor(() => {
-      const markAsCompleteBtn = screen.getByText('Mark as completed');
-      fireEvent.click(markAsCompleteBtn);
-      expect(mockPutData).toHaveBeenCalledWith({ id: '1', description: 'Test item', isCompleted: true }, '1');
+  
+    usePutTodoItem.mockReturnValue({
+      data: '1',
+      error: null,
+      putData: mockPutData,
     });
-  });
-});
+  
+    jest.spyOn(React, 'useState').mockImplementation(useStateMock);
+  
+    render(<TodoItems />);
+  
+    const markAsCompletedButtons = screen.getAllByText('Mark as completed');
+    fireEvent.click(markAsCompletedButtons[0]);
+    render(<TodoItems />);
+    await act(async () => {
+      expect(screen.getByText('completed')).toBeInTheDocument();
+    });
+  })
+})

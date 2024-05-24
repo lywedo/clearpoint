@@ -65,7 +65,7 @@ export const TodoItems = () => {
         </thead>
         <tbody>
           {todoItems?.map((item: TodoItem) => (
-            <tr key={item.id}>
+            <tr key={item.id} data-testid='todoItem'>
               <td>{item.id}</td>
               <td>{item.description}</td>
               <td>
