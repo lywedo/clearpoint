@@ -2,17 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import {AddTodoItem} from '../AddTodoItem';
 
-// jest.mock('../../hooks/usePostTodoItem', () => ({
-//   __esModule: true,
-//   default: () => ({
-//     data: null,
-//     loading: false,
-//     error: null,
-//     postData: jest.fn(),
-//     cleanData: jest.fn(),
-//   }),
-// }));
-
 describe('AddTodoItem component', () => {
   test('renders the component', () => {
     render(<AddTodoItem />);
